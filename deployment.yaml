@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tech365-deployment
+  labels:
+    app: tech365
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tech365
+  template:
+    metadata:
+      labels:
+        app: tech365
+    spec:
+      containers:
+      - name: tech365
+        image: 222634367210.dkr.ecr.us-east-1.amazonaws.com/tech365app
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: tech365
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: Loadbalancer
+  
