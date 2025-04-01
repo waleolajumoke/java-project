@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tech365-deployment
+  name: tech365
   labels:
     app: tech365
 spec:
@@ -22,10 +22,14 @@ spec:
         - containerPort: 8080
 
 ---
+
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-service
+  labels:
+    app: tech365
+    k8-app: tech365
+  name: tech365
 spec:
   selector:
     app: tech365
@@ -34,5 +38,4 @@ spec:
       protocol: TCP
       port: 80
       targetPort: 8080
-  type: Loadbalancer
-  
+  type: LoadBalancer
