@@ -8,50 +8,60 @@ pipeline{
         stage('CompileandRunSonarAnalysis'){
             
             steps{
-               withCredentials([string(credentialsId: 'tech365token', variable: 'tech365token')]) {
-                   sh 'mvn clean package sonar:sonar -Dsonar.login=$tech365token -Dsonar.host.url=https://sonarcloud.io -Dsonar.projectKey=tech3651 -Dsonar.organization=tech3651'
-                
-               }
+                steps {
+                sh 'mvn clean package -DskipTests'
+            }
             }
         }
-
+stage('Build Docker Image') {
+    steps {
+        sh 'docker build -t my-springboot-app .'
+    }
+}
+stage('Push Docker Image') {
+    steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds')]) {
+            sh 'docker push my-springboot-app'
+        }
+    }
+}
         // build docker image
-        stage('BuildDockerImage'){
-            steps{
-            withDockerRegistry([credentialsId: "dockerlogin", url:""]){
-                script{
-                   app =  docker.build("tech365app")
+        // stage('BuildDockerImage'){
+        //     steps{
+        //     withDockerRegistry([credentialsId: "dockerlogin", url:""]){
+        //         script{
+        //            app =  docker.build("tech365app")
                  
-                }
-            }
-            }
-        }
+        //         }
+        //     }
+        //     }
+        // }
 
         // push docker image
-        stage('PushDockerImage'){
-            steps{
-            script{
+        // stage('PushDockerImage'){
+        //     steps{
+        //     script{
 
-                // docker.withRegistry('https://registry.hub.docker.com', 'dockerlogin'){
+        //         // docker.withRegistry('https://registry.hub.docker.com', 'dockerlogin'){
 
 
-                docker.withRegistry('https://222634367210.dkr.ecr.us-east-1.amazonaws.com', 'ecr:us-east-1:aws-credentials'){
+        //         docker.withRegistry('https://222634367210.dkr.ecr.us-east-1.amazonaws.com', 'ecr:us-east-1:aws-credentials'){
   
-                    app.push("latest")
-                }
-            }
-        }
+        //             app.push("latest")
+        //         }
+        //     }
+        // }
 
-        }
+        // }
 
-        stage('kubernetes deployment'){
-            steps{
-                withKubeConfig([credentialsId: 'kubelogin']){
-                    sh('kubectl delete all -n devsecops')
-                    sh ('kubectl apply -f deployment.yaml --namespace=devsecops')
-                }
-            }
+        // stage('kubernetes deployment'){
+        //     steps{
+        //         withKubeConfig([credentialsId: 'kubelogin']){
+        //             sh('kubectl delete all -n devsecops')
+        //             sh ('kubectl apply -f deployment.yaml --namespace=devsecops')
+        //         }
+        //     }
             
-        }
+        // }
     }
 }
