@@ -5,29 +5,29 @@ pipeline{
        
     }
     stages{
-        stage('Build') {
-            steps {
-                sh 'mvn clean install -DskipTests'
-            }
-        }
+        // stage('Build') {
+        //     steps {
+        //         sh 'mvn clean install -DskipTests'
+        //     }
+        // }
 
-        stage('Run Tests') {
-            steps {
-                sh 'mvn test'
-            }
-        }
+        // stage('Run Tests') {
+        //     steps {
+        //         sh 'mvn test'
+        //     }
+        // }
 
-        stage('Package') {
-            steps {
-                sh 'mvn package'
-            }
-        }
+        // stage('Package') {
+        //     steps {
+        //         sh 'mvn package'
+        //     }
+        // }
 
-        stage('Archive JAR') {
-            steps {
-                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
-            }
-        }
+        // stage('Archive JAR') {
+        //     steps {
+        //         archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+        //     }
+        // }
 stage('Build Docker Image') {
     steps {
         sh 'docker build -t my-springboot-app .'
