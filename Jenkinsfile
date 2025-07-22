@@ -5,12 +5,27 @@ pipeline{
        
     }
     stages{
-        stage('CompileandRunSonarAnalysis'){
-            
-            steps{
-                steps {
-                sh 'mvn clean package -DskipTests'
+        stage('Build') {
+            steps {
+                sh 'mvn clean install -DskipTests'
             }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+
+        stage('Package') {
+            steps {
+                sh 'mvn package'
+            }
+        }
+
+        stage('Archive JAR') {
+            steps {
+                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
             }
         }
 stage('Build Docker Image') {
